@@ -1,0 +1,125 @@
+name: Release
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "skills/**"
+      - "CITATION.cff"
+      - "README.md"
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  release:
+    name: Bump version & publish release
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+
+      - name: Read current version from CITATION.cff
+        id: current
+        run: |
+          VERSION=$(grep '^version:' CITATION.cff | head -1 | sed 's/version: *"//' | sed 's/"//')
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "Current version: $VERSION"
+
+      - name: Compute next patch version
+        id: next
+        run: |
+          IFS='.' read -r MAJOR MINOR PATCH <<< "${{ steps.current.outputs.version }}"
+          NEXT_PATCH=$((PATCH + 1))
+          NEXT="${MAJOR}.${MINOR}.${NEXT_PATCH}"
+          echo "version=$NEXT" >> "$GITHUB_OUTPUT"
+          echo "Next version: $NEXT"
+
+      - name: Update CITATION.cff version & date
+        run: |
+          TODAY=$(date -u +%Y-%m-%d)
+          sed -i "s/^version: .*/version: \"${{ steps.next.outputs.version }}\"/" CITATION.cff
+          sed -i "s/^date-released: .*/date-released: \"$TODAY\"/" CITATION.cff
+
+      - name: Update SKILL.md version
+        run: |
+          sed -i "s/^version: .*/version: '${{ steps.next.outputs.version }}'/" skills/gpu-brrr/SKILL.md
+
+      - name: Commit version bump
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.RELEASE_TOKEN || secrets.GITHUB_TOKEN }}
+          script: |
+            const fs = require('fs');
+            const citation = fs.readFileSync('CITATION.cff', 'utf8');
+            const skill    = fs.readFileSync('skills/gpu-brrr/SKILL.md', 'utf8');
+
+            const citationBlob = await github.rest.git.createBlob({ owner: context.repo.owner, repo: context.repo.repo, content: Buffer.from(citation).toString('base64'), encoding: 'base64' });
+            const skillBlob    = await github.rest.git.createBlob({ owner: context.repo.owner, repo: context.repo.repo, content: Buffer.from(skill).toString('base64'), encoding: 'base64' });
+
+            const ref     = await github.rest.git.getRef({ owner: context.repo.owner, repo: context.repo.repo, ref: 'heads/main' });
+            const baseTree = (await github.rest.git.getCommit({ owner: context.repo.owner, repo: context.repo.repo, commit_sha: ref.data.object.sha })).data.tree.sha;
+
+            const tree = await github.rest.git.createTree({
+              owner: context.repo.owner, repo: context.repo.repo,
+              base_tree: baseTree,
+              tree: [
+                { path: 'CITATION.cff',             mode: '100644', type: 'blob', sha: citationBlob.data.sha },
+                { path: 'skills/gpu-brrr/SKILL.md', mode: '100644', type: 'blob', sha: skillBlob.data.sha   },
+              ]
+            });
+
+            const commit = await github.rest.git.createCommit({
+              owner: context.repo.owner, repo: context.repo.repo,
+              message: `chore: bump version to ${{ steps.next.outputs.version }} [skip ci]`,
+              tree: tree.data.sha,
+              parents: [ref.data.object.sha],
+            });
+
+            await github.rest.git.updateRef({ owner: context.repo.owner, repo: context.repo.repo, ref: 'heads/main', sha: commit.data.sha });
+
+      - name: Create tag & GitHub Release
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.RELEASE_TOKEN || secrets.GITHUB_TOKEN }}
+          script: |
+            const tag = 'v${{ steps.next.outputs.version }}';
+            const ref = await github.rest.git.getRef({ owner: context.repo.owner, repo: context.repo.repo, ref: 'heads/main' });
+
+            await github.rest.git.createRef({
+              owner: context.repo.owner, repo: context.repo.repo,
+              ref: `refs/tags/${tag}`,
+              sha: ref.data.object.sha,
+            });
+
+            // Build changelog from commits since last tag
+            const compare = await github.rest.repos.compareCommitsWithBasehead({
+              owner: context.repo.owner, repo: context.repo.repo,
+              basehead: '${{ steps.current.outputs.version }}...main',
+            }).catch(() => null);
+
+            let body = `## What changed\n\n`;
+            if (compare?.data?.commits?.length) {
+              body += compare.data.commits
+                .filter(c => !c.commit.message.startsWith('chore: bump'))
+                .map(c => `- ${c.commit.message.split('\n')[0]}`)
+                .join('\n') + '\n';
+            } else {
+              body += `- Skill and documentation updates\n`;
+            }
+            body += `\n**Full diff**: https://github.com/${{ github.repository }}/compare/${{ steps.current.outputs.version }}...${tag}`;
+
+            await github.rest.repos.createRelease({
+              owner: context.repo.owner, repo: context.repo.repo,
+              tag_name: tag,
+              name: `${tag}`,
+              body,
+              draft: false,
+              prerelease: false,
+            });
+
+            console.log(`✅ Released ${tag}`);
