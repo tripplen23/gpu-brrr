@@ -1,0 +1,18 @@
+cff-version: 1.2.0
+message: "If this Agent Skill helps your work, cite this repository and the foundational article."
+title: "GPU Brrr: A Deep Learning Performance Optimization Agent Skill"
+type: software
+authors:
+  - family-names: "Nguyen"
+    given-names: "Binh"
+version: "0.0.1"
+date-released: "2026-07-11"
+license: MIT
+references:
+  - type: article
+    title: "Making Deep Learning Go Brrrr From First Principles"
+    authors:
+      - family-names: "He"
+        given-names: "Horace"
+    year: "2022"
+    url: "https://horace.io/brrr_intro.html"

@@ -1,0 +1,34 @@
+{
+  "name": "gpu-brrr",
+  "owner": {
+    "name": "Binh Nguyen"
+  },
+  "metadata": {
+    "description": "Marketplace for the GPU Brrr deep learning performance optimization skill.",
+    "version": "0.0.1"
+  },
+  "plugins": [
+    {
+      "name": "gpu-brrr",
+      "source": "./",
+      "description": "Diagnose why a GPU deep learning workload is slow before fixing it: classify compute-bound vs memory-bandwidth-bound vs overhead-bound, then apply the matching fix (torch.compile, kernel fusion, mixed precision, and more). Based on Horace He's 'Making Deep Learning Go Brrrr From First Principles'.",
+      "version": "0.0.1",
+      "author": {
+        "name": "Binh Nguyen"
+      },
+      "homepage": "https://horace.io/brrr_intro.html",
+      "license": "MIT",
+      "category": "performance",
+      "keywords": [
+        "gpu",
+        "cuda",
+        "pytorch",
+        "torch.compile",
+        "performance",
+        "profiling",
+        "roofline",
+        "deep-learning"
+      ]
+    }
+  ]
+}

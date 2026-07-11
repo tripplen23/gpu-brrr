@@ -1,0 +1,20 @@
+{
+  "name": "gpu-brrr",
+  "version": "0.0.1",
+  "description": "Measurement-first GPU performance optimization for deep learning. Makes coding agents classify a workload as compute-bound, memory-bandwidth-bound, or overhead-bound, then apply only the matching fix. Based on Horace He's 'Making Deep Learning Go Brrrr From First Principles'.",
+  "author": {
+    "name": "Binh Nguyen"
+  },
+  "homepage": "https://horace.io/brrr_intro.html",
+  "license": "MIT",
+  "keywords": [
+    "gpu",
+    "cuda",
+    "pytorch",
+    "torch.compile",
+    "performance",
+    "profiling",
+    "roofline",
+    "deep-learning"
+  ]
+}
