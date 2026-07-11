@@ -5,7 +5,7 @@ type: software
 authors:
   - family-names: "Nguyen"
     given-names: "Binh"
-version: "0.0.1"
+version: "0.0.2"
 date-released: "2026-07-11"
 license: MIT
 references:

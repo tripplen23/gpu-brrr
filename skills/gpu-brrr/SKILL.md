@@ -4,7 +4,7 @@ description: "Diagnoses and optimizes GPU performance for deep learning from fir
 license: MIT
 metadata:
   author: binh-nguyen
-  version: '0.0.1'
+  version: '0.0.2'
   source: https://horace.io/brrr_intro.html
 ---
 
