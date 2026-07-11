@@ -6,6 +6,9 @@
 
 *Make the GPU go brrr — but measure first.*
 
+[![npx skills add](https://img.shields.io/badge/npx_skills-add-5A45FF?style=flat)](https://skills.sh/tripplen23/gpu-brrr)
+[![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+
 Coding agents love to "optimize" GPU code by reflex: reach for `torch.compile`,
 suggest a bigger GPU, sprinkle in mixed precision, rewrite a loop in C++. Most of that
 advice is aimed at the wrong bottleneck. **GPU Brrr** is an Agent Skill that forces the
@@ -139,6 +142,47 @@ cp -R skills/gpu-brrr ~/.config/opencode/skills/
 OpenCode also discovers Agent Skills under `.agents/skills/` and `~/.agents/skills/`. See
 the [OpenCode skill documentation](https://opencode.ai/docs/skills/).
 
+### Cursor
+
+```bash
+# One-liner — targets Cursor, no prompts
+npx skills add tripplen23/gpu-brrr --agent cursor --yes
+```
+
+Or manually:
+
+```bash
+mkdir -p .cursor/skills
+cp -R skills/gpu-brrr .cursor/skills/
+```
+
+Cursor auto-discovers skills from `.cursor/skills/` on workspace reload. See
+[Cursor Skills docs](https://cursor.com/docs/skills).
+
+### Kiro
+
+Kiro loads skills from project or global directories and exposes them as slash commands.
+Copy the skill folder into the workspace:
+
+```bash
+# Workspace-level (team conventions)
+mkdir -p .kiro/skills
+cp -R skills/gpu-brrr .kiro/skills/
+
+# Global (personal, available in all projects)
+mkdir -p ~/.kiro/skills
+cp -R skills/gpu-brrr ~/.kiro/skills/
+```
+
+Or install non-interactively:
+
+```bash
+npx skills add tripplen23/gpu-brrr --agent kiro --yes
+```
+
+Once installed, invoke with `/gpu-brrr` in the Kiro CLI. See
+[Kiro Skills docs](https://kiro.dev/docs/skills/).
+
 ### Hermes Agent
 
 Install directly from a published repository:
@@ -166,6 +210,8 @@ open [Agent Skills format](https://agentskills.io/specification).
 | Client | Native skill copy | Plugin marketplace |
 |--------|:-----------------:|:------------------:|
 | Claude Code | yes — `~/.claude/skills/` or `.claude/skills/` | yes — `.claude-plugin/` |
+| Cursor | yes — `.cursor/skills/` or `npx skills add --agent cursor` | — |
+| Kiro | yes — `.kiro/skills/` or `npx skills add --agent kiro` | — |
 | OpenCode | yes — `.opencode/skills/` or `~/.config/opencode/skills/` | — |
 | Hermes Agent | yes — `hermes skills install` or `~/.hermes/skills/` | — |
 | Any Agent Skills client | yes — copy `skills/gpu-brrr/` | — |
