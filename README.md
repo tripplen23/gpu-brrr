@@ -6,6 +6,9 @@
 
 *Make the GPU go brrr — but measure first.*
 
+[![npx skills add](https://img.shields.io/badge/npx_skills-add-5A45FF?style=flat)](https://www.skills.sh)
+[![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+
 Coding agents love to "optimize" GPU code by reflex: reach for `torch.compile`,
 suggest a bigger GPU, sprinkle in mixed precision, rewrite a loop in C++. Most of that
 advice is aimed at the wrong bottleneck. **GPU Brrr** is an Agent Skill that forces the
@@ -139,6 +142,40 @@ cp -R skills/gpu-brrr ~/.config/opencode/skills/
 OpenCode also discovers Agent Skills under `.agents/skills/` and `~/.agents/skills/`. See
 the [OpenCode skill documentation](https://opencode.ai/docs/skills/).
 
+### Cursor
+
+```bash
+# One-liner — npx skills handles the boilerplate
+npx skills add tripplen23/gpu-brrr
+```
+
+Or manually:
+
+```bash
+mkdir -p .cursor/skills
+cp -R skills/gpu-brrr .cursor/skills/
+```
+
+Cursor auto-discovers skills from `.cursor/skills/` on workspace reload. See
+[Cursor Skills docs](https://cursor.com/docs/skills).
+
+### Kiro
+
+```bash
+# Kiro supports the Agent Skills standard
+kiro skill install tripplen23/gpu-brrr
+```
+
+Or manually copy into any Kiro workspace:
+
+```bash
+mkdir -p .kiro/skills
+cp -R skills/gpu-brrr .kiro/skills/
+```
+
+Kiro also supports `npx skills add` and can import from any GitHub repository.
+See [Kiro Skills docs](https://kiro.dev/docs/skills/).
+
 ### Hermes Agent
 
 Install directly from a published repository:
@@ -166,6 +203,8 @@ open [Agent Skills format](https://agentskills.io/specification).
 | Client | Native skill copy | Plugin marketplace |
 |--------|:-----------------:|:------------------:|
 | Claude Code | yes — `~/.claude/skills/` or `.claude/skills/` | yes — `.claude-plugin/` |
+| Cursor | yes — `.cursor/skills/` or `npx skills add` | — |
+| Kiro | yes — `kiro skill install` or `npx skills add` | — |
 | OpenCode | yes — `.opencode/skills/` or `~/.config/opencode/skills/` | — |
 | Hermes Agent | yes — `hermes skills install` or `~/.hermes/skills/` | — |
 | Any Agent Skills client | yes — copy `skills/gpu-brrr/` | — |
